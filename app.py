@@ -1,7 +1,7 @@
 import streamlit as st
 from sklearn.datasets import load_iris
 import pandas as pd
-from utils import scatter_plot, get_model
+from utils import scatter_plot, get_model, image_path
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
@@ -19,38 +19,38 @@ def load_data():
     return dat
 
 
-st.markdown(
-    """
-    <style>
-    /* Background color for the entire page */
-    .stApp {
-        background-color:lightgreen;
-    }
-    /* Styling the title */
-    h1 {
-        color: #3366cc;
-        font-size: 48px;
-    }
+# st.markdown(
+#     """
+#     <style>
+#     /* Background color for the entire page */
+#     .stApp {
+#         background-color:lightgreen;
+#     }
+#     /* Styling the title */
+#     h1 {
+#         color: #3366cc;
+#         font-size: 48px;
+#     }
 
-    /* Styling the headers */
-    h2 {
-        color: #003366;
-        font-size: 36px;
-    }
+#     /* Styling the headers */
+#     h2 {
+#         color: #003366;
+#         font-size: 36px;
+#     }
     
-    h3 {
-        color: #336699;
-        font-size: 30px;
-    }
+#     h3 {
+#         color: #336699;
+#         font-size: 30px;
+#     }
 
-    /* Optional: Centering text */
-    .stMarkdown {
-        text-align: center;
-    }
-    </style>
-""",
-    unsafe_allow_html=True,
-)
+#     /* Optional: Centering text */
+#     .stMarkdown {
+#         text-align: center;
+#     }
+#     </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 
 iris_data = load_data()
 # print(iris_data.head())
@@ -102,7 +102,7 @@ with tab2:
 with tab3:
     make_choice = st.selectbox(
         "Select the classifier",
-        ("RanfomForest", "AdaBoost", "DecisionTreeClassifier", "LogisticRegression"),
+        ("RanfomForest", "AdaBoost", "DecisionTreeClassifier", "LogisticRegression", "GradientBoostingClassifier"),
     )
     if st.button("Train model"):
         selected_model = get_model(make_choice)
@@ -110,7 +110,7 @@ with tab3:
         y = iris_data["target"]
         x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
         selected_model.fit(x_train, y_train)
-        path = f"D:\\Projects\\Test\\models\\{make_choice}.pkl"
+        path = f"D:\\ds\\git_practice\\model\\{make_choice}.pkl"
         joblib.dump(selected_model, path)
         st.session_state["trained_model"] = selected_model
         y_pred = selected_model.predict(x_test)
@@ -130,3 +130,6 @@ with tab4:
         prediction = st.session_state["trained_model"].predict(input_data)
         print(RESUTDICT[prediction[0]])
         st.write(RESUTDICT[prediction[0]])
+        print(prediction[0])
+        path = image_path(prediction[0])
+        st.image(path , caption="Iris Flower", use_container_width=True)
